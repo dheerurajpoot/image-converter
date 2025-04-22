@@ -1,76 +1,73 @@
-/**
- * This is a simplified version of an image converter.
- * In a real-world application, you would use a proper image processing library
- * or API to handle the conversion.
- */
+export async function convertImage(
+	file: File,
+	targetFormat: string
+): Promise<string> {
+	return new Promise((resolve, reject) => {
+		try {
+			// Create a FileReader to read the file
+			const reader = new FileReader();
 
-export async function convertImage(file: File, targetFormat: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      // Create a FileReader to read the file
-      const reader = new FileReader()
+			reader.onload = (event) => {
+				const img = new Image();
+				img.onload = () => {
+					// Create a canvas element
+					const canvas = document.createElement("canvas");
+					canvas.width = img.width;
+					canvas.height = img.height;
 
-      reader.onload = (event) => {
-        const img = new Image()
-        img.onload = () => {
-          // Create a canvas element
-          const canvas = document.createElement("canvas")
-          canvas.width = img.width
-          canvas.height = img.height
+					// Draw the image on the canvas
+					const ctx = canvas.getContext("2d");
+					if (!ctx) {
+						reject(new Error("Could not get canvas context"));
+						return;
+					}
 
-          // Draw the image on the canvas
-          const ctx = canvas.getContext("2d")
-          if (!ctx) {
-            reject(new Error("Could not get canvas context"))
-            return
-          }
+					// Fill with white background for formats that don't support transparency
+					if (targetFormat === "jpg" || targetFormat === "jpeg") {
+						ctx.fillStyle = "white";
+						ctx.fillRect(0, 0, canvas.width, canvas.height);
+					}
 
-          // Fill with white background for formats that don't support transparency
-          if (targetFormat === "jpg" || targetFormat === "jpeg") {
-            ctx.fillStyle = "white"
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-          }
+					ctx.drawImage(img, 0, 0);
 
-          ctx.drawImage(img, 0, 0)
+					// Convert the canvas to the target format
+					let mimeType: string;
+					switch (targetFormat) {
+						case "png":
+							mimeType = "image/png";
+							break;
+						case "jpg":
+						case "jpeg":
+							mimeType = "image/jpeg";
+							break;
+						case "webp":
+							mimeType = "image/webp";
+							break;
+						default:
+							mimeType = "image/png";
+					}
 
-          // Convert the canvas to the target format
-          let mimeType: string
-          switch (targetFormat) {
-            case "png":
-              mimeType = "image/png"
-              break
-            case "jpg":
-            case "jpeg":
-              mimeType = "image/jpeg"
-              break
-            case "webp":
-              mimeType = "image/webp"
-              break
-            default:
-              mimeType = "image/png"
-          }
+					// Get the data URL from the canvas
+					const dataUrl = canvas.toDataURL(mimeType, 0.9);
+					resolve(dataUrl);
+				};
 
-          // Get the data URL from the canvas
-          const dataUrl = canvas.toDataURL(mimeType, 0.9)
-          resolve(dataUrl)
-        }
+				img.onerror = () => {
+					reject(new Error("Failed to load image"));
+				};
 
-        img.onerror = () => {
-          reject(new Error("Failed to load image"))
-        }
+				// Set the source of the image to the FileReader result
+				img.src = event.target?.result as string;
+			};
 
-        // Set the source of the image to the FileReader result
-        img.src = event.target?.result as string
-      }
+			reader.onerror = () => {
+				reject(new Error("Failed to read file"));
+			};
 
-      reader.onerror = () => {
-        reject(new Error("Failed to read file"))
-      }
-
-      // Read the file as a data URL
-      reader.readAsDataURL(file)
-    } catch (error) {
-      reject(error)
-    }
-  })
+			// Read the file as a data URL
+			reader.readAsDataURL(file);
+		} catch (error) {
+			reject(error);
+		}
+	});
 }

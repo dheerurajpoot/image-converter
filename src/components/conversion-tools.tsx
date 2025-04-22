@@ -1,16 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ImageConverter from "./image-converter";
 
 export default function ConversionTools() {
-	const [activeTab, setActiveTab] = useState("png-to-jpg");
-
-	const handleTabChange = (value: string) => {
-		setActiveTab(value);
-	};
-
 	return (
 		<section
 			id='conversion-tools'
@@ -28,8 +21,7 @@ export default function ConversionTools() {
 
 				<Tabs
 					defaultValue='png-to-jpg'
-					className='w-full max-w-4xl mx-auto'
-					onValueChange={handleTabChange}>
+					className='w-full max-w-4xl mx-auto'>
 					<TabsList className='grid grid-cols-2 md:grid-cols-4 mb-8'>
 						<TabsTrigger value='png-to-jpg'>PNG to JPG</TabsTrigger>
 						<TabsTrigger value='jpg-to-png'>JPG to PNG</TabsTrigger>

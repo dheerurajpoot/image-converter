@@ -35,13 +35,13 @@ export default function ImageConverter({
 
 			// Check if file is an image
 			if (!selectedFile.type.startsWith("image/")) {
-				toast("Please select an image file.");
+				toast.error("Please select an image file.");
 				return;
 			}
 
 			// Check file size (max 10MB)
 			if (selectedFile.size > 10 * 1024 * 1024) {
-				toast("Please select an image smaller than 10MB.");
+				toast.error("Please select an image smaller than 10MB.");
 				return;
 			}
 
@@ -80,9 +80,9 @@ export default function ImageConverter({
 			setProgress(100);
 			setConvertedImage(result);
 
-			toast("Conversion complete");
+			toast.success("Conversion complete");
 		} catch (error) {
-			toast("Conversion failed");
+			toast.error("Conversion failed");
 		} finally {
 			setIsConverting(false);
 		}
