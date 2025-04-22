@@ -30,6 +30,7 @@ export default function ContactForm() {
 			// Reset form
 			event.currentTarget.reset();
 		} catch (error) {
+			console.error(error);
 			toast.error(
 				"There was a problem sending your message. Please try again."
 			);

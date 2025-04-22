@@ -82,6 +82,7 @@ export default function ImageConverter({
 
 			toast.success("Conversion complete");
 		} catch (error) {
+			console.error(error);
 			toast.error("Conversion failed");
 		} finally {
 			setIsConverting(false);
